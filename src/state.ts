@@ -130,7 +130,14 @@ export class State {
     {name: "tutorial", type: Type.STRING},
     {name: "problem", type: Type.OBJECT, keyMap: problems},
     {name: "initZero", type: Type.BOOLEAN},
-    {name: "hideText", type: Type.BOOLEAN}
+    {name: "hideText", type: Type.BOOLEAN},
+    {name: "goalTrainLossMinThresholdFirst", type: Type.NUMBER},
+    {name: "goalTrainLossMinThresholdSecond", type: Type.NUMBER},
+    {name: "goalTestLossMinThresholdFirst", type: Type.NUMBER},
+    {name: "goalTestLossMinThresholdSecond", type: Type.NUMBER},
+    {name: "goalTrainTestDiffMinThresholdFirst", type: Type.NUMBER},
+    {name: "goalTrainTestDiffMinThresholdSecond", type: Type.NUMBER},
+    {name: "goalTrainTestDiffMinThresholdThird", type: Type.NUMBER}
   ];
 
   [key: string]: any;
@@ -163,6 +170,13 @@ export class State {
   dataset: dataset.DataGenerator = dataset.classifyCircleData;
   regDataset: dataset.DataGenerator = dataset.regressPlane;
   seed: string;
+  goalTrainLossMinThresholdFirst = undefined;
+  goalTrainLossMinThresholdSecond = undefined;
+  goalTestLossMinThresholdFirst = undefined;
+  goalTestLossMinThresholdSecond = undefined;
+  goalTrainTestDiffMinThresholdFirst = undefined;
+  goalTrainTestDiffMinThresholdBetter = undefined;
+  goalTrainTestDiffMinThresholdBest = undefined;
 
   /**
    * Deserializes the state from the url hash.
