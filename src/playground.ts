@@ -309,6 +309,16 @@ function makeGUI() {
     parametersChanged = true;
     reset();
   });
+  let currentMax = parseInt(noise.property("max"));
+  if (state.noise > currentMax) {
+    if (state.noise <= 80) {  // Max tested value for exercises
+      noise.property("max", state.noise);
+    } else {
+      state.noise = 50;
+    }
+  } else if (state.noise < 0) {
+    state.noise = 0;
+  }
   noise.property("value", state.noise);
   d3.select("label[for='noise'] .value").text(state.noise);
 
@@ -1104,26 +1114,19 @@ function checkGoalReached (trainingLoss, testLoss) {
   for (let goal in goals) {
     let goalThreshold = goals[goal]['value'];
     if (!goals[goal]['goalReached']) {
-      if (goal == 'goalTrainLossMinThresholdFirst' ||
+      if (goal == 'goalTrainLossMinThresholdFirst'||
           goal == 'goalTrainLossMinThresholdSecond') {
-        if (trainingLoss < goalThreshold) {
-          console.log(trainingLoss, goalThreshold)
+        if (trainingLoss <= goalThreshold) {
           markGoalAsDone(goal);
         }
       } else if (goal == 'goalTrainTestDiffMinThresholdFirst' ||
                  goal == 'goalTrainTestDiffMinThresholdSecond') {
-        if (trainingTestDiff < goalThreshold) {
+        if (trainingTestDiff <= goalThreshold) {
           markGoalAsDone(goal);
         }
       } else if (goal == 'goalTestLossMinThresholdFirst' ||
-                 goal == 'goalTestLossMinThresholdSecond' ||
-                 goal == 'goalTestLossMinThresholdThird') {
-        if (testLoss < goalThreshold) {
-          markGoalAsDone(goal);
-        }
-      } else if (goal == 'goalTrainTestDiffMaxThresholdFirst' ||
-                 goal == 'goalTrainTestDiffMaxThresholdSecond') {
-        if (trainingTestDiff > goalThreshold) {
+                 goal == 'goalTestLossMinThresholdSecond') {
+        if (testLoss <= goalThreshold) {
           markGoalAsDone(goal);
         }
       }
