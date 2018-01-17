@@ -135,9 +135,12 @@ export class State {
     {name: "goalTrainLossMinThresholdSecond", type: Type.NUMBER},
     {name: "goalTestLossMinThresholdFirst", type: Type.NUMBER},
     {name: "goalTestLossMinThresholdSecond", type: Type.NUMBER},
+    {name: "goalTestLossMinThresholdThird", type: Type.NUMBER},
     {name: "goalTrainTestDiffMinThresholdFirst", type: Type.NUMBER},
     {name: "goalTrainTestDiffMinThresholdSecond", type: Type.NUMBER},
-    {name: "goalTrainTestDiffMinThresholdThird", type: Type.NUMBER}
+    {name: "goalTrainTestDiffMinThresholdThird", type: Type.NUMBER},
+    {name: "goalTrainTestDiffMaxThresholdFirst", type: Type.NUMBER},
+    {name: "goalTrainTestDiffMaxThresholdSecond", type: Type.NUMBER}
   ];
 
   [key: string]: any;
@@ -174,9 +177,12 @@ export class State {
   goalTrainLossMinThresholdSecond = undefined;
   goalTestLossMinThresholdFirst = undefined;
   goalTestLossMinThresholdSecond = undefined;
+  goalTestLossMinThresholdThird = undefined;
   goalTrainTestDiffMinThresholdFirst = undefined;
-  goalTrainTestDiffMinThresholdBetter = undefined;
-  goalTrainTestDiffMinThresholdBest = undefined;
+  goalTrainTestDiffMinThresholdSecond = undefined;
+  goalTrainTestDiffMinThresholdThird= undefined;
+  goalTrainTestDiffMaxThresholdFirst = undefined;
+  goalTrainTestDiffMaxThresholdSecond = undefined;
 
   /**
    * Deserializes the state from the url hash.

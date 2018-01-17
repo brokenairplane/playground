@@ -1104,19 +1104,26 @@ function checkGoalReached (trainingLoss, testLoss) {
   for (let goal in goals) {
     let goalThreshold = goals[goal]['value'];
     if (!goals[goal]['goalReached']) {
-      if (goal == 'goalTrainLossMinThresholdFirst'||
+      if (goal == 'goalTrainLossMinThresholdFirst' ||
           goal == 'goalTrainLossMinThresholdSecond') {
-        if (trainingLoss <= goalThreshold) {
+        if (trainingLoss < goalThreshold) {
+          console.log(trainingLoss, goalThreshold)
           markGoalAsDone(goal);
         }
       } else if (goal == 'goalTrainTestDiffMinThresholdFirst' ||
                  goal == 'goalTrainTestDiffMinThresholdSecond') {
-        if (trainingTestDiff <= goalThreshold) {
+        if (trainingTestDiff < goalThreshold) {
           markGoalAsDone(goal);
         }
       } else if (goal == 'goalTestLossMinThresholdFirst' ||
-                 goal == 'goalTestLossMinThresholdSecond') {
-        if (testLoss <= goalThreshold) {
+                 goal == 'goalTestLossMinThresholdSecond' ||
+                 goal == 'goalTestLossMinThresholdThird') {
+        if (testLoss < goalThreshold) {
+          markGoalAsDone(goal);
+        }
+      } else if (goal == 'goalTrainTestDiffMaxThresholdFirst' ||
+                 goal == 'goalTrainTestDiffMaxThresholdSecond') {
+        if (trainingTestDiff > goalThreshold) {
           markGoalAsDone(goal);
         }
       }
