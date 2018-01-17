@@ -173,6 +173,17 @@ let lossTest = 0;
 let player = new Player();
 let lineChart = new AppendingLineChart(d3.select("#linechart"),
     ["#777", "black"]);
+let goals = {};
+
+function setupGoalsTracker() {
+  for (let param in state) {
+    let goalRegExp = /^goal/g;
+    if (goalRegExp.test(param) && state[param]) {
+      goals[param] = {'value': state[param],
+                      'goalReached': false};
+    }
+  }
+}
 
 function makeGUI() {
   d3.select("#reset-button").on("click", () => {
@@ -298,6 +309,16 @@ function makeGUI() {
     parametersChanged = true;
     reset();
   });
+  let currentMax = parseInt(noise.property("max"));
+  if (state.noise > currentMax) {
+    if (state.noise <= 80) {  // Max tested value for exercises
+      noise.property("max", state.noise);
+    } else {
+      state.noise = 50;
+    }
+  } else if (state.noise < 0) {
+    state.noise = 0;
+  }
   noise.property("value", state.noise);
   d3.select("label[for='noise'] .value").text(state.noise);
 
@@ -908,6 +929,7 @@ function oneStep(): void {
   // Compute the loss.
   lossTrain = getLoss(network, trainData);
   lossTest = getLoss(network, testData);
+  checkGoalReached(lossTrain, lossTest);
   updateUI();
 }
 
@@ -950,6 +972,7 @@ function reset(onStartup=false) {
   lossTest = getLoss(network, testData);
   drawNetwork(network);
   updateUI(true);
+  setupGoalsTracker();
 };
 
 function initTutorial() {
@@ -1079,6 +1102,38 @@ function generateData(firstTime = false) {
 let firstInteraction = true;
 let parametersChanged = false;
 
+function checkGoalReached (trainingLoss, testLoss) {
+
+  var trainingTestDiff = trainingLoss - testLoss;
+
+  function markGoalAsDone (goal) {
+    goals[goal]['goalReached'] = true;
+    goalReachedGAEvent(goal);
+  }
+
+  for (let goal in goals) {
+    let goalThreshold = goals[goal]['value'];
+    if (!goals[goal]['goalReached']) {
+      if (goal == 'goalTrainLossMinThresholdFirst'||
+          goal == 'goalTrainLossMinThresholdSecond') {
+        if (trainingLoss <= goalThreshold) {
+          markGoalAsDone(goal);
+        }
+      } else if (goal == 'goalTrainTestDiffMinThresholdFirst' ||
+                 goal == 'goalTrainTestDiffMinThresholdSecond') {
+        if (trainingTestDiff <= goalThreshold) {
+          markGoalAsDone(goal);
+        }
+      } else if (goal == 'goalTestLossMinThresholdFirst' ||
+                 goal == 'goalTestLossMinThresholdSecond') {
+        if (testLoss <= goalThreshold) {
+          markGoalAsDone(goal);
+        }
+      }
+    }
+  }
+}
+
 function userHasInteracted() {
   if (!firstInteraction) {
     return;
@@ -1102,9 +1157,20 @@ function simulationStarted() {
   parametersChanged = false;
 }
 
+function goalReachedGAEvent(goalMessage) {
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'Subthreshold Solution',
+    eventAction: goalMessage,
+    eventLabel: state.tutorial == null ? '' : state.tutorial,
+    eventValue: iter
+  });
+}
+
 drawDatasetThumbnails();
 initTutorial();
 makeGUI();
 generateData(true);
 reset(true);
 hideControls();
+setupGoalsTracker();
